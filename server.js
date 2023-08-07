@@ -256,7 +256,8 @@ function updateEmployee() {
         ];
         inquirer.prompt(questions)
             .then(response => {
-                hide.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [response.employee, response.updated_role], (err, res) => {
+                // console.log(response);
+                hide.query(`UPDATE employee SET role_id = ${response.employee} WHERE id = ${response.updated_role} `, (err, res) => {
                     if (err) throw err;
                     console.log("Employee updated successfully");
                     setTimeout(startQuestion, 1000);
