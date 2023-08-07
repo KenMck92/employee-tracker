@@ -1,3 +1,4 @@
+// required files from package.json to used in functions
 const inquirer = require('inquirer');
 // const { showRoles, showDepartments, addDepartment } = require('./db/index');
 const hide = require('./db/connections');
@@ -7,7 +8,7 @@ const mysql = require('mysql2');
 hide.connect(err => {
     if (err) throw err;
 });
-
+// Prompt question and choices when user runs node
 function startQuestion() {
     inquirer.prompt([
         {
@@ -26,6 +27,7 @@ function startQuestion() {
             message: "(Move up and down to reveal more choices)"
         }]
     )
+    // When user clicks on one of the choices and answers the questions they are prompted with query tables and the prompt restarts
         .then((answers) => {
             switch (answers.start) {
                 case "View All Employees":
@@ -65,43 +67,7 @@ function startQuestion() {
             }
         })
 };
-//         .then((selections) => {
-//         const { choices } = selections;
-
-//         if (choices === "View All Employees") {
-//             showEmployees();
-//             setTimeout(startQuestion, 1000);
-//         }
-
-//         if (choices === "Add Employee") {
-//             addEmployee();
-//         }
-
-//         if (choices === "Update Employee Role") {
-//             updateEmployee();
-//         }
-
-//         if (choices === "View All Roles") {
-//             showRoles();
-//         }
-
-//         if (choices === "Add Role") {
-//             addRole();
-//         }
-
-//         if (choices === "View All Departments") {
-//             showDepartments();
-//         }
-
-//         if (choices === "Add Department") {
-//             addDepartment();
-//         };
-
-//         if (choices === "Quit") {
-//             hide.end();
-//         };
-//     });
-// };
+// Function to show all employees
 function showEmployees() {
 
     hide.query(`SELECT * FROM employee`, function (err, res) {
@@ -112,7 +78,7 @@ function showEmployees() {
         }
     });
 };
-
+// Function to show all roles
 function showRoles() {
     hide.query(`SELECT * FROM role`, function (err, res) {
         if (err) {
@@ -122,7 +88,7 @@ function showRoles() {
         }
     });
 };
-
+// Function to show all departments
 function showDepartments() {
     hide.query(`SELECT * FROM department`, function (err, res) {
         if (err) {
@@ -132,7 +98,7 @@ function showDepartments() {
         }
     })
 };
-
+// Function to add a new department to the query
 function addDepartment() {
     let questions = [
         {
@@ -151,7 +117,7 @@ function addDepartment() {
             });
         })
 };
-
+// Function to add a new role to the query
 function addRole() {
     hide.query("SELECT * FROM department", (err, result) => {
         if (err) throw err;
@@ -185,7 +151,7 @@ function addRole() {
             })
     })
 };
-
+// Function to add a new employee to the query
 function addEmployee() {
     hide.query("SELECT * FROM role", (err, result) => {
         if (err) throw err;
@@ -230,7 +196,7 @@ function addEmployee() {
         })
     })
 };
-
+// Function to update employee roles
 function updateEmployee() {
     hide.query("SELECT * FROM employee", (err, emUpdate) => {
         if (err) throw (err);
