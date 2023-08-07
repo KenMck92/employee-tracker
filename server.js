@@ -55,6 +55,10 @@ function startQuestion() {
                     addEmployee();
                     break;
 
+                case "Update Employee Role":
+                    updateEmployee();
+                    break;
+
                 default:
                     hide.end();
 
@@ -180,7 +184,7 @@ function addRole() {
                 });
             })
     })
-}
+};
 
 function addEmployee() {
     hide.query("SELECT * FROM role", (err, result) => {
@@ -194,12 +198,12 @@ function addEmployee() {
             let questions = [
                 {
                     type: "input",
-                    name: "first-name",
+                    name: "first_name",
                     message: "First name?"
                 },
                 {
                     type: "input",
-                    name: "last-name",
+                    name: "last_name",
                     message: "Last name?"
                 },
                 {
@@ -226,5 +230,40 @@ function addEmployee() {
         })
     })
 };
+
+function updateEmployee() {
+    hide.query("SELECT * FROM employee", (err, emUpdate) => {
+        if (err) throw (err);
+        const upDateEm = emUpdate.map(({ first_name, last_name, id}) => ({name: first_name + "" + last_name, value: id}));
+
+    hide.query("SELECT * FROM role", (err, roleUpdate) => {
+        if (err) throw err;
+        const upRole = roleUpdate.map(({ title, id}) => ({ name: title, value: id}));
+
+        let questions = [
+            {
+                type: "list",
+                name: "employee",
+                message: "Which employee do you want to update?",
+                choices: upDateEm
+            },
+            {
+                type: "list",
+                name: "updated_role",
+                message: "What role do you want to update the employee too?",
+                choices: upRole
+            },
+        ];
+        inquirer.prompt(questions)
+            .then(response => {
+                hide.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [response.employee, response.updated_role], (err, res) => {
+                    if (err) throw err;
+                    console.log("Employee updated successfully");
+                    setTimeout(startQuestion, 1000);
+                });
+            })
+    })
+    })
+}
 
 setTimeout(startQuestion, 1000);
