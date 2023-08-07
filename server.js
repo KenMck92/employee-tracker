@@ -51,9 +51,13 @@ function startQuestion() {
                     addRole();
                     break;
 
+                case "Add Employee":
+                    addEmployee();
+                    break;
+
                 default:
                     hide.end();
-                    
+
             }
         })
 };
@@ -147,67 +151,24 @@ function addDepartment() {
 function addRole() {
     hide.query("SELECT * FROM department", (err, result) => {
         if (err) throw err;
-        const deptResults = result.map(({ name, id}) => ({ name: name, value: id}));
-    
-    let questions = [
-        {
-            type: "input",
-            name: "title",
-            message: "What role do you wish to add?"
-        },
-        {
-            type: "input",
-            name: "salary",
-            message: "What salary do you wish to have?"
-        },
-        {
-            type: "list",
-            name: "dept",
-            message: "What department do you want this new roll in?",
-            choices: deptResults
-        },
-    ];
-    inquirer.prompt(questions)
-        .then(response => {
-            hide.query(`INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`, [response.title, response.salary, response.dept], (err, res) => {
-                if (err) throw err;
-                console.log(`Successfully inserted ${response.title},${response.salary},${response.dept}`);
-                setTimeout(startQuestion, 1000);
-            });
-        })
-})
+        const deptResults = result.map(({ name, id }) => ({ name: name, value: id }));
 
-function addEmployee () {
-    hide.query("SELECT * FROM role", (err, result) => {
-        if (err) throw err;
-        const roleResults = result.map(({ title, id}) => ({ name: title, value: id}));
-
-    hide.query(`SELECT * FROM employee`, (err, employRes) => {
-        if (err) throw err;
-        const empResults = employRes.map(({first_name, last_name, id }) => ({name: first_name + "" + last_name, value: id}))
-        
         let questions = [
             {
                 type: "input",
-                name: "first-name",
-                message: "First name?"
+                name: "title",
+                message: "What role do you wish to add?"
             },
             {
                 type: "input",
-                name: "last-name",
-                message: "Last name?"
+                name: "salary",
+                message: "What salary do you wish to have?"
             },
             {
                 type: "list",
-                name: "roles",
-                message: "What will be the role of the new employee?",
-                choices: roleResults
-            },
-            {
-                type: "list",
-                name: "manager",
-                message: "What will be the role of the new employee?",
-                choices: empResults
+                name: "dept",
+                message: "What department do you want this new roll in?",
+                choices: deptResults
             },
         ];
         inquirer.prompt(questions)
@@ -219,14 +180,51 @@ function addEmployee () {
                 });
             })
     })
-    
-    
-    hide.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`);
-    
-
-
 }
+
+function addEmployee() {
+    hide.query("SELECT * FROM role", (err, result) => {
+        if (err) throw err;
+        const roleResults = result.map(({ title, id }) => ({ name: title, value: id }));
+
+        hide.query(`SELECT * FROM employee`, (err, employRes) => {
+            if (err) throw err;
+            const empResults = employRes.map(({ first_name, last_name, id }) => ({ name: first_name + "" + last_name, value: id }))
+
+            let questions = [
+                {
+                    type: "input",
+                    name: "first-name",
+                    message: "First name?"
+                },
+                {
+                    type: "input",
+                    name: "last-name",
+                    message: "Last name?"
+                },
+                {
+                    type: "list",
+                    name: "roles",
+                    message: "What will be the role of the new employee?",
+                    choices: roleResults
+                },
+                {
+                    type: "list",
+                    name: "manager",
+                    message: "What manager will be assigned to new employee?",
+                    choices: empResults
+                },
+            ];
+            inquirer.prompt(questions)
+                .then(response => {
+                    hide.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`, [response.first_name, response.last_name, response.roles, response.manager], (err, res) => {
+                        if (err) throw err;
+                        console.log(`Successfully inserted ${response.first_name},${response.last_name},${response.roles}, ${response.manager}`);
+                        setTimeout(startQuestion, 1000);
+                    });
+                })
+        })
+    })
 };
 
 setTimeout(startQuestion, 1000);
-module.exports = { startQuestion } ;
