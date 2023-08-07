@@ -9,3 +9,12 @@ In my connections.js file I required my dotenv and mysql2 files to process my .e
 Server.js:
 In server.js all of my functions were implemented to run my test. When node is ran the user is presented with a question to add, view or updated employee information. I used the switch case methods to answer the prompt questions and to load my prompt again after each question was successfully entered. I added in a quit function to end the connection to the server if the user selects quit. 
 
+## Usage
+
+![Alt Text](./images/Employee-tracker.webm)
+
+https://drive.google.com/file/d/1D7wNLQeMtRoR7dTscUP7T0ARpjk0Z6ya/view
+
+
+https://github.com/KenMck92/employee-tracker
+
