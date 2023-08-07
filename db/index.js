@@ -2,11 +2,11 @@ const inquirer = require('inquirer');
 const hide = require('./connections');
 const mysql = require('mysql2');
 const cTable = require('console.table');
+// const {startQuestion} = require('../server');
 
 function showEmployees() {
-    // const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 
-    hide.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id`, function (err, res) {
+    hide.query(`SELECT * FROM employee`, function (err, res) {
         if (err) {
             console.log(err);
         } else {
@@ -41,16 +41,35 @@ function showDepartments() {
     hide.query(`SELECT * FROM department`, function (err, res) {
         if (err) {
             console.log(err);
-        }else{
+        } else {
             console.table(res);
-        }    
+        }
+    })
+};
+
+
+function addDepartment() {
+    let questions = [
+        {
+            type: "input",
+            name: "name",
+            message: "What is the new department you want to add?"
+        }
+    ];
+
+    inquirer.prompt(questions)
+        .then(response => {
+            hide.query(`INSERT INTO department (name) VALUES (?)`, [response.name], (err, res) => {
+                if (err) throw err;
+                console.log(`Successfully inserted ${response.name} department at id ${res.insertId}`);
+                // startQuestion();
+            });
         })
-    };
+        // .then(() => {
+        //     setTimeout(startQuestion, 1000);
+        // })
+};
 
 
-addDepartment = () => {
-
-}
-
-module.exports = { showEmployees, showRoles, showDepartments };
+module.exports = { showEmployees, showRoles, showDepartments, addDepartment };
 
